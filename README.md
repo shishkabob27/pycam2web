@@ -13,7 +13,7 @@ This is a simple Flask web application that streams video from your webcam. It a
 pip install -r requirements.txt
 ```
 
-Running the Application
+### Running the Application
 
 Use the following command to start the application:
 
@@ -27,7 +27,7 @@ Accessing the Stream
 To view the video stream, go to http://localhost:7000/mjpeg in your web browser.
 To capture a single frame, go to http://localhost:7000/jpg.
 
-Changing the Camera
+### Changing the Camera
 
 Go to http://localhost:7000/camera.
 Select the desired camera from the dropdown menu.
