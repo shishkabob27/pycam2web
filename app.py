@@ -28,9 +28,7 @@ def generate_mjpeg():
 @app.route('/')
 @app.route('/mjpeg')
 def mjpeg_feed():
-    return Response(generate_mjpeg(),
-                    mimetype='multipart/x-mixed-replace; boundary=frame')
-
+    return Response(generate_mjpeg(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def get_jpg_frame():
     ret, frame = cap.read()
@@ -58,13 +56,7 @@ def change_camera():
         cap.release()
         camera = int(request.form['selected_camera'])
         cap = cv2.VideoCapture(camera)
-        # Get the native resolution of the camera
-        width = int(cap.get(cv2.CAP_PROP_FRAME_WIDTH))
-        height = int(cap.get(cv2.CAP_PROP_FRAME_HEIGHT))
-            
-        # Set the video capture to the native resolution
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, width)
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, height)
+   
         #save camera to config file
         with open('config.json', 'r') as f:
             config = json.load(f)
@@ -91,7 +83,5 @@ if __name__ == '__main__':
             json.dump(config, f, indent=4)
              
     cap = cv2.VideoCapture(int(config['camera']))
-    
-    
     
     app.run(debug=True, port=args.port)
