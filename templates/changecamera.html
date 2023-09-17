@@ -33,6 +33,21 @@
                 <option value="{{ index }}">{{ camera_name }}</option>
             {% endfor %}
         </select>
-        <input type="submit" value="Change Camera">
+        <p>Resolution</p>
+        <div>
+            <label for="resX">Width</label>
+            <input type="number" required name="resX">
+            <label for="resY">Height</label>
+            <input type="number" required name="resY">
+        </div>
+        <input type="submit" value="Save">
+
     </form>
+
+    <script>
+        document.getElementById("selected_camera").value = {{ selected_camera }};
+
+        document.getElementsByName("resX")[0].value = {{ resX }};
+        document.getElementsByName("resY")[0].value = {{ resY }};
+    </script>
 </html>

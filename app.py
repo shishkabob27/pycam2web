@@ -55,12 +55,19 @@ def change_camera():
         global cap
         cap.release()
         camera = int(request.form['selected_camera'])
+        resX = request.form['resX']
+        resY = request.form['resY']
         cap = cv2.VideoCapture(camera)
+        
+        cap.set(cv2.CAP_PROP_FRAME_WIDTH, int(resX))
+        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, int(resY))
    
         #save camera to config file
         with open('config.json', 'r') as f:
             config = json.load(f)
         config['camera'] = camera
+        config['resX'] = int(resX)
+        config['resY'] = int(resY)
         with open('config.json', 'w') as f:
             json.dump(config, f, indent=4)
         
@@ -68,7 +75,14 @@ def change_camera():
         
     if request.method == 'GET':
         cameras = get_available_cameras()
-        return render_template('changecamera.html', cameras=cameras)
+        #load camera from config file
+        with open('config.json', 'r') as f:
+            config = json.load(f)
+        selected_camera = config['camera']
+        resX = config['resX']
+        resY = config['resY']
+        
+        return render_template('changecamera.html', cameras=cameras, selected_camera=selected_camera, resX=resX, resY=resY)
 
 if __name__ == '__main__':
     #Create config file if not exists
@@ -77,11 +91,16 @@ if __name__ == '__main__':
             config = json.load(f)
     except FileNotFoundError:
         config = {
-            'camera': 0
+            'camera': 0,
+            'resX': 1920,
+            'resY': 1080
             }
         with open('config.json', 'w') as f:
             json.dump(config, f, indent=4)
              
     cap = cv2.VideoCapture(int(config['camera']))
+    
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, int(config['resX']))
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, int(config['resY']))
     
     app.run(debug=True, port=args.port)
