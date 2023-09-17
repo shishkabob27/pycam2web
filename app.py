@@ -12,7 +12,7 @@ args = parser.parse_args()
 app = Flask(__name__)
 
 # Initialize the webcam
-cap = cv2.VideoCapture(0)
+cap = None
 
 def generate_mjpeg():
     while True:
@@ -28,6 +28,8 @@ def generate_mjpeg():
 @app.route('/')
 @app.route('/mjpeg')
 def mjpeg_feed():
+    if cap is None:
+        return Response(open('static/nocameraselected.jpg', 'rb').read(), mimetype='image/jpeg')
     return Response(generate_mjpeg(), mimetype='multipart/x-mixed-replace; boundary=frame')
 
 def get_jpg_frame():
@@ -37,6 +39,8 @@ def get_jpg_frame():
 
 @app.route('/jpg')
 def jpg_frame():
+    if cap is None:
+        return Response(open('static/nocameraselected.jpg', 'rb').read(), mimetype='image/jpeg')
     return Response(get_jpg_frame(), mimetype='image/jpeg')
 
 def get_available_cameras() :
@@ -50,17 +54,15 @@ def get_available_cameras() :
     return available_cameras
 
 @app.route('/camera', methods=['GET', 'POST'])
-def change_camera():
+def camera_page():
     if request.method == 'POST':
         global cap
         cap.release()
         camera = int(request.form['selected_camera'])
         resX = request.form['resX']
         resY = request.form['resY']
-        cap = cv2.VideoCapture(camera)
         
-        cap.set(cv2.CAP_PROP_FRAME_WIDTH, int(resX))
-        cap.set(cv2.CAP_PROP_FRAME_HEIGHT, int(resY))
+        change_camera(camera, resX, resY)
    
         #save camera to config file
         with open('config.json', 'r') as f:
@@ -83,6 +85,22 @@ def change_camera():
         resY = config['resY']
         
         return render_template('changecamera.html', cameras=cameras, selected_camera=selected_camera, resX=resX, resY=resY)
+    
+def change_camera(camera, resX, resY):
+    global cap
+    if cap is not None:
+        cap.release()
+    
+    cameras = get_available_cameras()
+    if camera not in cameras:
+        print('Camera does not exist!')
+        return
+    
+    cap = cv2.VideoCapture(camera)
+    
+    cap.set(cv2.CAP_PROP_FRAME_WIDTH, int(resX))
+    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, int(resY))
+    
 
 if __name__ == '__main__':
     #Create config file if not exists
@@ -98,9 +116,6 @@ if __name__ == '__main__':
         with open('config.json', 'w') as f:
             json.dump(config, f, indent=4)
              
-    cap = cv2.VideoCapture(int(config['camera']))
-    
-    cap.set(cv2.CAP_PROP_FRAME_WIDTH, int(config['resX']))
-    cap.set(cv2.CAP_PROP_FRAME_HEIGHT, int(config['resY']))
+    change_camera(config['camera'], config['resX'], config['resY'])
     
     app.run(debug=True, port=args.port)
