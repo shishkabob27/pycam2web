@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<head>
+    <title>Change Camera</title>
+    <style>
+        html {
+            background-color: #1a1a1a;
+            color: #ffffff;
+        }
+        select {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            border-radius: 4px;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+        input[type=submit] {
+            background-color: #1a1a1a;
+            color: #ffffff;
+            border: 1px solid #ffffff;
+            border-radius: 4px;
+            padding: 12px 20px;
+            margin: 8px 0;
+            box-sizing: border-box;
+        }
+    </style>
+</head>
+<html>
+    <form action="/camera" method="post" >
+        <select name="selected_camera" id="selected_camera">
+            {% for index, camera_name in cameras.items() %}
+                <option value="{{ index }}">{{ camera_name }}</option>
+            {% endfor %}
+        </select>
+        <input type="submit" value="Change Camera">
+    </form>
+</html>
