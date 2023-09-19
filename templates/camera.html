@@ -1,12 +1,14 @@
 <!DOCTYPE html>
 <head>
-    <title>Change Camera</title>
+    <title>pycam2web</title>
     <style>
         html {
             background-color: #1a1a1a;
             color: #ffffff;
+            font-family: Arial, Helvetica, sans-serif;
         }
-        select {
+
+        input[type=submit], select, button {
             background-color: #1a1a1a;
             color: #ffffff;
             border: 1px solid #ffffff;
@@ -15,19 +17,33 @@
             margin: 8px 0;
             box-sizing: border-box;
         }
-        input[type=submit] {
-            background-color: #1a1a1a;
-            color: #ffffff;
-            border: 1px solid #ffffff;
+
+        input[type=submit]:hover, select:hover, button:hover {
+            background-color: #ffffff;
+            color: #1a1a1a;
+            border: 1px solid #1a1a1a;
             border-radius: 4px;
             padding: 12px 20px;
             margin: 8px 0;
             box-sizing: border-box;
+            cursor: pointer;
         }
     </style>
 </head>
 <html>
-    <form action="/camera" method="post" >
+
+    <div>
+        <h1>Camera</h1>
+        <img src="/mjpeg">
+        <div>
+            <a href="/mjpeg"><button>Open MJPEG stream</button></a>
+            <a href="/jpg"><button>Open JPG snapshot</button></a>
+        </div>
+    </div>
+
+    <h1>Settings</h1>
+
+    <form action="/" method="post" >
         <select name="selected_camera" id="selected_camera">
             {% for index, camera_name in cameras.items() %}
                 <option value="{{ index }}">{{ camera_name }}</option>

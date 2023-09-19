@@ -25,7 +25,6 @@ def generate_mjpeg():
         yield (b'--frame\r\n'
                b'Content-Type: image/jpeg\r\n\r\n' + jpeg.tobytes() + b'\r\n\r\n')
 
-@app.route('/')
 @app.route('/mjpeg')
 def mjpeg_feed():
     if cap is None:
@@ -53,7 +52,7 @@ def get_available_cameras() :
 
     return available_cameras
 
-@app.route('/camera', methods=['GET', 'POST'])
+@app.route('/', methods=['GET', 'POST'])
 def camera_page():
     if request.method == 'POST':
         global cap
@@ -73,7 +72,7 @@ def camera_page():
         with open('config.json', 'w') as f:
             json.dump(config, f, indent=4)
         
-        return redirect("/mjpeg")
+        return redirect("/")
         
     if request.method == 'GET':
         cameras = get_available_cameras()
@@ -84,7 +83,7 @@ def camera_page():
         resX = config['resX']
         resY = config['resY']
         
-        return render_template('changecamera.html', cameras=cameras, selected_camera=selected_camera, resX=resX, resY=resY)
+        return render_template('camera.html', cameras=cameras, selected_camera=selected_camera, resX=resX, resY=resY)
     
 def change_camera(camera, resX, resY):
     global cap
