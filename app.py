@@ -117,4 +117,4 @@ if __name__ == '__main__':
              
     change_camera(config['camera'], config['resX'], config['resY'])
     
-    app.run(debug=True, port=args.port)
+    app.run(debug=False, port=args.port)
